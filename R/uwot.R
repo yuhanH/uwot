@@ -401,7 +401,7 @@
 #' \emph{Journal of Machine Learning Research}, \emph{9} (2579-2605).
 #' \url{http://www.jmlr.org/papers/v9/vandermaaten08a.html}
 #' @export
-umap <- function(X, n_neighbors = 15, n_components = 2, metric = "euclidean",
+umap <-  function(X, n_neighbors = 15, n_components = 2, metric = "euclidean",
                  n_epochs = NULL, learning_rate = 1, scale = FALSE,
                  init = "spectral", init_sdev = NULL,
                  spread = 1, min_dist = 0.01,
@@ -1206,7 +1206,6 @@ uwot <- function(X, n_neighbors = 15, n_components = 2, metric = "euclidean",
     b <- ab_res[2]
     tsmessage("UMAP embedding parameters a = ", formatC(a), " b = ", formatC(b))
   }
-
   if (n_neighbors < 2) {
     stop("n_neighbors must be >= 2")
   }
@@ -1259,7 +1258,6 @@ uwot <- function(X, n_neighbors = 15, n_components = 2, metric = "euclidean",
     n_sgd_threads <- round(n_sgd_threads)
     tsmessage("Non-integer 'n_sgd_threads' provided. Setting to ", n_sgd_threads)
   }
-
   # Store categorical columns to be used to generate the graph
   Xcat <- NULL
   # number of original columns in data frame (or matrix)
@@ -1333,7 +1331,6 @@ uwot <- function(X, n_neighbors = 15, n_components = 2, metric = "euclidean",
   if (method == "largevis" && kernel == "knn") {
     n_neighbors <- perplexity
   }
-
   if (n_neighbors > n_vertices) {
     # If nn_method is a list, we will determine n_neighbors later
     if (!is.list(nn_method)) {
@@ -1356,7 +1353,6 @@ uwot <- function(X, n_neighbors = 15, n_components = 2, metric = "euclidean",
   else {
     metrics <- metric
   }
-
   # For typical case of numeric matrix X and not using hamming distance, save
   # PCA results here in case initialization uses PCA too
   pca_models <- NULL
@@ -1378,7 +1374,6 @@ uwot <- function(X, n_neighbors = 15, n_components = 2, metric = "euclidean",
     }
     pca_shortcut <- TRUE
   }
-
   d2sr <- data2set(X, Xcat, n_neighbors, metrics, nn_method,
     n_trees, search_k,
     method,
@@ -1504,14 +1499,14 @@ uwot <- function(X, n_neighbors = 15, n_components = 2, metric = "euclidean",
 
     if (init_is_spectral(init)) {
       connected <- connected_components(V)
-      if (connected$n_components > 1) {
-        tsmessage(
-          "Found ", connected$n_components, " connected components, ",
-          "falling back to 'spca' initialization with init_sdev = 1"
-        )
-        init <- "spca"
-        init_sdev <- 1
-      }
+      # if (connected$n_components > 1) {
+      #   tsmessage(
+      #     "Found ", connected$n_components, " connected components, ",
+      #     "falling back to 'spca' initialization with init_sdev = 1"
+      #   )
+      #   init <- "spca"
+      #   init_sdev <- 1
+      # }
     }
 
     # Don't repeat PCA initialization if we've already done it once
@@ -1570,7 +1565,6 @@ uwot <- function(X, n_neighbors = 15, n_components = 2, metric = "euclidean",
       }
     }
   }
-
   if (n_epochs > 0) {
     V@x[V@x < max(V@x) / n_epochs] <- 0
     V <- Matrix::drop0(V)
@@ -1652,23 +1646,43 @@ uwot <- function(X, n_neighbors = 15, n_components = 2, metric = "euclidean",
     nblocks <- length(nns)
     res <- list(embedding = embedding)
     if (ret_model) {
-      res <- append(res, list(
-        scale_info = attr_to_scale_info(X),
-        n_neighbors = n_neighbors,
-        search_k = search_k,
-        local_connectivity = local_connectivity,
-        n_epochs = n_epochs,
-        alpha = alpha,
-        negative_sample_rate = negative_sample_rate,
-        method = method,
-        a = a,
-        b = b,
-        gamma = gamma,
-        approx_pow = approx_pow,
-        metric = metrics,
-        norig_col = norig_col,
-        pcg_rand = pcg_rand
-      ))
+      if(!is.null(X)){
+        res <- append(res, list(
+          scale_info = attr_to_scale_info(X),
+          n_neighbors = n_neighbors,
+          search_k = search_k,
+          local_connectivity = local_connectivity,
+          n_epochs = n_epochs,
+          alpha = alpha,
+          negative_sample_rate = negative_sample_rate,
+          method = method,
+          a = a,
+          b = b,
+          gamma = gamma,
+          approx_pow = approx_pow,
+          metric = metrics,
+          norig_col = norig_col,
+          pcg_rand = pcg_rand
+        ))
+      } else {
+        res <- append(res, list(
+          scale_info = NULL,
+          n_neighbors = n_neighbors,
+          search_k = search_k,
+          local_connectivity = local_connectivity,
+          n_epochs = n_epochs,
+          alpha = alpha,
+          negative_sample_rate = negative_sample_rate,
+          method = method,
+          a = a,
+          b = b,
+          gamma = gamma,
+          approx_pow = approx_pow,
+          metric = metrics,
+          norig_col = norig_col,
+          pcg_rand = pcg_rand
+        ))
+      }
       if (nblocks > 1) {
         res$nn_index <- list()
         for (i in 1:nblocks) {
@@ -1676,7 +1690,7 @@ uwot <- function(X, n_neighbors = 15, n_components = 2, metric = "euclidean",
         }
       }
       else {
-        res$nn_index <- nns[[1]]$index
+          res$nn_index <- nns[[1]]$index
         if (is.null(res$metric[[1]])) {
           # 31: Metric usually lists column indices or names, NULL means use all
           # of them, but for loading the NN index we need the number of 
@@ -1684,7 +1698,12 @@ uwot <- function(X, n_neighbors = 15, n_components = 2, metric = "euclidean",
           # the input data at load time)
           # To be sure of the dimensionality, fetch the first item from the 
           # index and see how many elements are in the returned vector.
-          res$metric[[1]] <- list(ndim = length(res$nn_index$getItemsVector(0)))
+          if(!is.null(X)){
+            res$metric[[1]] <- list(ndim = length(res$nn_index$getItemsVector(0)))
+          } else{
+            res$metric[[1]] <- list()
+          }
+         
         }
       }
       if (!is.null(pca_models)) {
