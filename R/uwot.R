@@ -401,7 +401,7 @@
 #' \emph{Journal of Machine Learning Research}, \emph{9} (2579-2605).
 #' \url{http://www.jmlr.org/papers/v9/vandermaaten08a.html}
 #' @export
-umap <-  function(X, n_neighbors = 15, n_components = 2, metric = "euclidean",
+umap <- function(X, n_neighbors = 15, n_components = 2, metric = "euclidean",
                  n_epochs = NULL, learning_rate = 1, scale = FALSE,
                  init = "spectral", init_sdev = NULL,
                  spread = 1, min_dist = 0.01,
@@ -1206,6 +1206,7 @@ uwot <- function(X, n_neighbors = 15, n_components = 2, metric = "euclidean",
     b <- ab_res[2]
     tsmessage("UMAP embedding parameters a = ", formatC(a), " b = ", formatC(b))
   }
+  
   if (n_neighbors < 2) {
     stop("n_neighbors must be >= 2")
   }
@@ -1258,6 +1259,7 @@ uwot <- function(X, n_neighbors = 15, n_components = 2, metric = "euclidean",
     n_sgd_threads <- round(n_sgd_threads)
     tsmessage("Non-integer 'n_sgd_threads' provided. Setting to ", n_sgd_threads)
   }
+  
   # Store categorical columns to be used to generate the graph
   Xcat <- NULL
   # number of original columns in data frame (or matrix)
