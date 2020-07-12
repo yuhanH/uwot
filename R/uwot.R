@@ -1652,9 +1652,8 @@ uwot <- function(X, n_neighbors = 15, n_components = 2, metric = "euclidean",
     nblocks <- length(nns)
     res <- list(embedding = embedding)
     if (ret_model) {
-      if(!is.null(X)){
         res <- append(res, list(
-          scale_info = attr_to_scale_info(X),
+          scale_info = if (!is.null(X)) { attr_to_scale_info(X) } else { NULL },
           n_neighbors = n_neighbors,
           search_k = search_k,
           local_connectivity = local_connectivity,
@@ -1670,25 +1669,6 @@ uwot <- function(X, n_neighbors = 15, n_components = 2, metric = "euclidean",
           norig_col = norig_col,
           pcg_rand = pcg_rand
         ))
-      } else {
-        res <- append(res, list(
-          scale_info = NULL,
-          n_neighbors = n_neighbors,
-          search_k = search_k,
-          local_connectivity = local_connectivity,
-          n_epochs = n_epochs,
-          alpha = alpha,
-          negative_sample_rate = negative_sample_rate,
-          method = method,
-          a = a,
-          b = b,
-          gamma = gamma,
-          approx_pow = approx_pow,
-          metric = metrics,
-          norig_col = norig_col,
-          pcg_rand = pcg_rand
-        ))
-      }
       if (nblocks > 1) {
         res$nn_index <- list()
         for (i in 1:nblocks) {
@@ -1696,7 +1676,7 @@ uwot <- function(X, n_neighbors = 15, n_components = 2, metric = "euclidean",
         }
       }
       else {
-          res$nn_index <- nns[[1]]$index
+        res$nn_index <- nns[[1]]$index
         if (is.null(res$metric[[1]])) {
           # 31: Metric usually lists column indices or names, NULL means use all
           # of them, but for loading the NN index we need the number of 
