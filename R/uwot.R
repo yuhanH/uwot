@@ -1501,17 +1501,17 @@ uwot <- function(X, n_neighbors = 15, n_components = 2, metric = "euclidean",
       "laplacian", "spca", "pca", "inormlaplacian", "ispectral",
       "agspectral"
     ))
-    
+
     if (init_is_spectral(init)) {
       connected <- connected_components(V)
-     if (connected$n_components > 1) {
-         tsmessage(
-           "Found ", connected$n_components, " connected components, ",
-           "falling back to 'spca' initialization with init_sdev = 1"
-         )
-         init <- "spca"
+      if (connected$n_components > 1) {
+        tsmessage(
+          "Found ", connected$n_components, " connected components, ",
+          "falling back to 'spca' initialization with init_sdev = 1"
+        )
+        init <- "spca"
         init_sdev <- 1
-       }
+      }
     }
 
     # Don't repeat PCA initialization if we've already done it once
