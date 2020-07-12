@@ -1206,7 +1206,7 @@ uwot <- function(X, n_neighbors = 15, n_components = 2, metric = "euclidean",
     b <- ab_res[2]
     tsmessage("UMAP embedding parameters a = ", formatC(a), " b = ", formatC(b))
   }
-  
+
   if (n_neighbors < 2) {
     stop("n_neighbors must be >= 2")
   }
@@ -1259,7 +1259,7 @@ uwot <- function(X, n_neighbors = 15, n_components = 2, metric = "euclidean",
     n_sgd_threads <- round(n_sgd_threads)
     tsmessage("Non-integer 'n_sgd_threads' provided. Setting to ", n_sgd_threads)
   }
-  
+
   # Store categorical columns to be used to generate the graph
   Xcat <- NULL
   # number of original columns in data frame (or matrix)
@@ -1333,6 +1333,7 @@ uwot <- function(X, n_neighbors = 15, n_components = 2, metric = "euclidean",
   if (method == "largevis" && kernel == "knn") {
     n_neighbors <- perplexity
   }
+
   if (n_neighbors > n_vertices) {
     # If nn_method is a list, we will determine n_neighbors later
     if (!is.list(nn_method)) {
@@ -1355,6 +1356,7 @@ uwot <- function(X, n_neighbors = 15, n_components = 2, metric = "euclidean",
   else {
     metrics <- metric
   }
+
   # For typical case of numeric matrix X and not using hamming distance, save
   # PCA results here in case initialization uses PCA too
   pca_models <- NULL
@@ -1376,6 +1378,7 @@ uwot <- function(X, n_neighbors = 15, n_components = 2, metric = "euclidean",
     }
     pca_shortcut <- TRUE
   }
+
   d2sr <- data2set(X, Xcat, n_neighbors, metrics, nn_method,
     n_trees, search_k,
     method,
@@ -1567,6 +1570,7 @@ uwot <- function(X, n_neighbors = 15, n_components = 2, metric = "euclidean",
       }
     }
   }
+
   if (n_epochs > 0) {
     V@x[V@x < max(V@x) / n_epochs] <- 0
     V <- Matrix::drop0(V)
