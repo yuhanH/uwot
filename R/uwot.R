@@ -1689,7 +1689,6 @@ uwot <- function(X, n_neighbors = 15, n_components = 2, metric = "euclidean",
           } else{
             res$metric[[1]] <- list()
           }
-         
         }
       }
       if (!is.null(pca_models)) {
